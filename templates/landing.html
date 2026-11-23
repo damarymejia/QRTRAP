@@ -1,0 +1,104 @@
+{% from '_icons.html' import icon, logo %}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Simulación educativa · QR TRAP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%238a3ffc'/%3E%3Cpath d='M7 7h7v7H7zM18 7h7v7h-7zM7 18h7v7H7z' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="landing">
+<header class="l-top"><div class="l-in"><a class="brand" href="#">{{ logo() }}<span>QR<b>TRAP</b></span></a><span class="pill">Simulación educativa</span></div></header>
+
+<main class="l-wrap" id="app" data-token="{{ token }}">
+
+  <section class="card l-hero">
+    <div class="l-shield">{{ icon('shield') }}</div>
+    <h1>Esto fue una simulación</h1>
+    <p>Escaneaste un código QR sin saber quién lo colocó ni a dónde te llevaría. Eso es justo lo que estudia <b>QR TRAP</b>, un ejercicio académico de ingeniería social.</p>
+    <p class="ok">No pasó nada malo y <b>no recopilamos tus datos personales</b>.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="card-t">Lo que viste y por qué funcionó</h2>
+    <blockquote class="l-quote">“{{ variant.mensaje }}”</blockquote>
+    <div class="l-tech">
+      <span class="chip v-{{ variant.slug }}"><i></i>Técnica: {{ variant.nombre }}</span>
+    </div>
+    <p>{{ variant.mecanismo }}. Los atacantes usan mensajes así porque son cortos, parecen inofensivos y hacen que actuemos antes de pensar.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="card-t">¿Qué es el quishing?</h2>
+    <p>Es el <b>phishing mediante códigos QR</b>. Un QR es solo un enlace “disfrazado”: no puedes ver a dónde lleva hasta que lo escaneas. Un código malicioso puede abrir una página falsa que pide contraseñas, instalar una app dañina o llevarte a una oferta fraudulenta. También pueden pegar un QR falso encima de uno legítimo.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="card-t">Señales de riesgo</h2>
+    <ul class="l-list warn">
+      <li>{{ icon('alert') }}<span>Mensajes de <b>urgencia</b>, premios, “gratis” o “cupo limitado”.</span></li>
+      <li>{{ icon('alert') }}<span>Nadie se identifica: <b>no sabes quién lo publicó</b>.</span></li>
+      <li>{{ icon('alert') }}<span>El QR está <b>pegado sobre otro</b> o se ve manipulado.</span></li>
+      <li>{{ icon('alert') }}<span>El enlace es <b>acortado</b> o no coincide con el sitio que dice ser.</span></li>
+      <li>{{ icon('alert') }}<span>La página pide <b>contraseñas, datos personales o instalar algo</b>.</span></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="card-t">Cómo escanear con seguridad</h2>
+    <ul class="l-list good">
+      <li>{{ icon('check') }}<span><b>Mira el enlace</b> que muestra tu cámara antes de abrirlo.</span></li>
+      <li>{{ icon('check') }}<span>Confirma <b>quién lo colocó</b>; ante la duda, pregunta al responsable del lugar.</span></li>
+      <li>{{ icon('check') }}<span>No inicies sesión ni escribas datos en páginas a las que llegaste por un QR desconocido.</span></li>
+      <li>{{ icon('check') }}<span>Si necesitas un servicio (WiFi, trámites), usa <b>los canales oficiales</b>.</span></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="card-t">Tu privacidad</h2>
+    <div class="l-two">
+      <div><h3>{{ icon('check') }} Se registra</h3><ul><li>Qué versión del código escaneaste</li><li>Fecha y hora</li><li>Un número aleatorio de visita</li><li>Tus respuestas de selección (si decides responder)</li></ul></div>
+      <div><h3>{{ icon('x') }} No se registra</h3><ul><li>Nombre, correo o identificación</li><li>Dirección IP ni datos del dispositivo</li><li>Ubicación ni permisos</li><li>Texto libre</li></ul></div>
+    </div>
+  </section>
+
+  <div id="end-sentinel"></div>
+
+  <section class="card" id="step-ask">
+    <h2 class="card-t">¿Nos ayudas con 4 preguntas?</h2>
+    <p>Es <b>opcional y anónimo</b>. Tarda menos de un minuto y nos ayuda a entender cómo reaccionamos ante estos mensajes.</p>
+    <div class="l-btns">
+      <button class="btn primary" type="button" id="btn-yes">Responder</button>
+      <button class="btn ghost" type="button" id="btn-no">No, gracias</button>
+    </div>
+  </section>
+
+  <form class="card" id="step-form" hidden novalidate>
+    <h2 class="card-t">Formulario anónimo</h2>
+    {% for q in questions %}
+    <fieldset class="q" data-q="{{ q.id }}">
+      <legend><span class="qn">{{ loop.index }}</span>{{ q.texto }}</legend>
+      <div class="opts">
+        {% for key, label in q.opciones.items() %}
+        <label class="opt"><input type="radio" name="{{ q.id }}" value="{{ key }}"><span>{{ label }}</span></label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    {% endfor %}
+    <div class="alert" id="form-err" hidden>{{ icon('alert') }}<span>No se pudo enviar. Inténtalo de nuevo.</span></div>
+    <button class="btn primary block" type="submit" id="btn-send" disabled>Enviar respuestas</button>
+  </form>
+
+  <section class="card l-thanks" id="step-thanks" hidden>
+    <div class="l-shield ok">{{ icon('check') }}</div>
+    <h2>¡Gracias!</h2>
+    <p id="thanks-text">Ya puedes cerrar esta página. La próxima vez, revisa antes de escanear.</p>
+  </section>
+
+  <footer class="l-foot">Proyecto académico de la asignatura Seguridad Informática · Ingeniería en Sistemas.<br>Los códigos se retirarán al terminar el ejercicio.</footer>
+</main>
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% from '_icons.html' import icon %}
+{% block title %}Panel{% endblock %}
+{% block content %}
+<header class="pagehead">
+  <div>
+    <h1>Panel de resultados <span class="crumb">/ Comparativo de estrategias</span></h1>
+    <p class="muted">Eventos anónimos por estrategia · <span id="updated">actualizando…</span></p>
+  </div>
+  <div class="toolbar">
+    <button class="btn ghost" id="btn-refresh" type="button">{{ icon('refresh') }}Actualizar</button>
+    <button class="btn ghost" id="btn-seed" type="button">{{ icon('beaker') }}Cargar datos de demostración</button>
+    <button class="btn ghost danger" id="btn-clear" type="button" hidden>{{ icon('trash') }}Borrar demostración</button>
+  </div>
+</header>
+
+<div class="banner" id="demo-banner" hidden>{{ icon('beaker') }}<span>Estás viendo <b>datos de demostración</b> (ficticios). Bórralos antes de colocar los códigos reales.</span></div>
+
+<section class="row top">
+  <div class="kpis">
+    {% for v in variants %}
+    <article class="kpi g-{{ v.slug }}" data-slug="{{ v.slug }}">
+      <div class="kpi-icon">{{ icon({'curiosidad':'help','utilidad':'wifi','urgencia':'bolt','informativa':'bell'}[v.slug]) }}</div>
+      <h3>{{ v.nombre }}</h3>
+      <div class="kpi-num" data-f="scan">0</div>
+      <div class="kpi-sub">escaneos</div>
+      <div class="kpi-meta"><span><b data-f="read">0</b> lecturas</span><span><b data-f="response">0</b> respuestas</span><span class="kpi-pill" data-f="resp_rate">0%</span></div>
+    </article>
+    {% endfor %}
+  </div>
+  <article class="card">
+    <h2 class="card-t">Total por estrategia</h2>
+    <div class="chart h-260"><canvas id="c-total" aria-label="Escaneos, lecturas y respuestas por estrategia" role="img"></canvas></div>
+  </article>
+</section>
+
+<section class="row mid">
+  <article class="card">
+    <div class="card-h">
+      <h2 class="card-t">Escaneos en el tiempo</h2>
+      <div class="seg" id="seg-range"><button type="button" data-r="hour" class="on">24 h</button><button type="button" data-r="day">14 días</button></div>
+    </div>
+    <div class="chart h-300"><canvas id="c-line" aria-label="Escaneos por estrategia a lo largo del tiempo" role="img"></canvas></div>
+  </article>
+  <article class="card">
+    <h2 class="card-t">Resumen · motivación</h2>
+    <div class="donut"><canvas id="c-donut" aria-label="Motivación para escanear" role="img"></canvas><div class="donut-c"><b id="donut-n">0</b><span>respuestas</span></div></div>
+    <ul class="legend" id="donut-legend"></ul>
+  </article>
+</section>
+
+<section class="tiles" id="tiles">
+  <div class="tile"><div class="t-ic c-blue">{{ icon('eye') }}</div><div><span>Escaneos totales</span><b data-t="scan">0</b></div></div>
+  <div class="tile"><div class="t-ic c-amber">{{ icon('book') }}</div><div><span>Tasa de lectura</span><b data-t="read_rate">0%</b></div></div>
+  <div class="tile"><div class="t-ic c-green">{{ icon('check') }}</div><div><span>Tasa de respuesta</span><b data-t="resp_rate">0%</b></div></div>
+  <div class="tile"><div class="t-ic c-violet">{{ icon('shield') }}</div><div><span>Verificaron origen y destino</span><b data-t="verified_pct">0%</b></div></div>
+  <div class="tile"><div class="t-ic c-teal">{{ icon('trend') }}</div><div><span>Cambiarán su hábito</span><b data-t="changed_pct">0%</b></div></div>
+</section>
+
+<section class="row low">
+  <article class="card">
+    <div class="card-h"><h2 class="card-t">Historial de eventos</h2><span class="muted tiny">Anónimo · hora de Honduras</span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Estrategia</th><th>Evento</th><th>Fecha y hora</th><th>Visita</th></tr></thead>
+        <tbody id="tbl-body"><tr><td colspan="4" class="muted">Cargando…</td></tr></tbody>
+      </table>
+    </div>
+  </article>
+  <article class="card">
+    <h2 class="card-t">Ranking de conversión</h2>
+    <p class="muted tiny">De escaneo a respuesta del formulario</p>
+    <ul class="rank" id="rank"></ul>
+  </article>
+</section>
+
+<h2 class="sec">Respuestas del formulario por estrategia</h2>
+<section class="qgrid">
+  {% for q in questions %}
+  <article class="card">
+    <h2 class="card-t">{{ q.corto }}</h2>
+    <p class="muted tiny">{{ q.texto }}</p>
+    <div class="chart h-240"><canvas id="c-{{ q.id }}" role="img" aria-label="{{ q.corto }} por estrategia"></canvas></div>
+  </article>
+  {% endfor %}
+</section>
+<p class="foot muted tiny">Los resultados representan solo a quienes escanearon y respondieron; las respuestas son autodeclaradas. Presentarlos como observación acotada, no como conclusión definitiva.</p>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

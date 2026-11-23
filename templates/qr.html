@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% from '_icons.html' import icon %}
+{% block title %}Códigos QR{% endblock %}
+{% block content %}
+<header class="pagehead no-print">
+  <div><h1>Generador de códigos QR <span class="crumb">/ Una versión por estrategia</span></h1>
+  <p class="muted">Cada código apunta a la misma página educativa; solo cambia el mensaje impreso.</p></div>
+  <div class="toolbar"><button class="btn primary" type="button" id="btn-print">{{ icon('printer') }}Imprimir hoja</button></div>
+</header>
+
+<article class="card no-print">
+  <label class="field">
+    <span>URL pública de la plataforma <em class="muted">(la que tendrá el código al imprimir)</em></span>
+    <div class="input-ic">{{ icon('link') }}<input type="url" id="base" value="{{ base }}" placeholder="https://tu-app.onrender.com" spellcheck="false"></div>
+  </label>
+  <div class="banner warn" id="base-warn" hidden>{{ icon('alert') }}<span>Estás usando una dirección local (localhost / red interna). Los teléfonos de otras personas no podrán abrirla: usa la URL pública antes de imprimir.</span></div>
+  <div class="banner info">{{ icon('shield') }}<span>Imprime solo los mensajes <b>aprobados</b> por el docente y el coordinador. No uses nombres, logotipos ni firmas oficiales.</span></div>
+</article>
+
+<section class="qrgrid">
+  {% for v in variants %}
+  <article class="qrcard g-{{ v.slug }}-soft" data-slug="{{ v.slug }}">
+    <div class="qr-top g-{{ v.slug }}"><span>{{ v.nombre }}</span></div>
+    <div class="qr-body">
+      <img class="qr-img" alt="Código QR de {{ v.nombre }}" width="220" height="220" src="{{ url_for('qr_image', slug=v.slug, fmt='svg', base=base) }}">
+      <p class="qr-msg">{{ v.mensaje }}</p>
+      <p class="tiny muted qr-url" data-url></p>
+      <div class="qr-actions no-print">
+        <a class="btn ghost sm" data-fmt="svg" href="#">{{ icon('download') }}SVG</a>
+        <a class="btn ghost sm" data-fmt="png" href="#">{{ icon('download') }}PNG</a>
+        <a class="btn ghost sm" href="{{ url_for('landing', slug=v.slug, preview=1) }}" target="_blank" rel="noopener">{{ icon('eye') }}Probar</a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/qr.js') }}"></script>{% endblock %}

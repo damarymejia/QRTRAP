@@ -1,0 +1,21 @@
+{% from '_icons.html' import icon, logo %}
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Acceso · QR TRAP</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}"></head>
+<body class="auth">
+<form class="auth-card" method="post" autocomplete="off">
+  <div class="auth-logo">{{ logo() }}</div>
+  <h1>QR<b>TRAP</b></h1>
+  <p class="muted">Panel de resultados · acceso protegido</p>
+  <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+  <label class="field">
+    <span>Clave de acceso</span>
+    <div class="input-ic">{{ icon('lock') }}<input type="password" name="password" required autofocus placeholder="••••••••"></div>
+  </label>
+  {% if error %}<div class="alert">{{ icon('alert') }}{{ error }}</div>{% endif %}
+  <button class="btn primary block" type="submit">Entrar</button>
+  <p class="tiny muted">Simulación educativa de ingeniería social · No se recopilan datos personales</p>
+</form>
+</body></html>

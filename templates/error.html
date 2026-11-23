@@ -1,0 +1,8 @@
+{% from '_icons.html' import icon, logo %}
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ code }} · QR TRAP</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}"></head>
+<body class="auth"><div class="auth-card center">
+<div class="auth-logo">{{ logo() }}</div>
+<h1 class="err-code">{{ code }}</h1><p class="muted">{{ msg }}</p>
+</div></body></html>

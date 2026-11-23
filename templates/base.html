@@ -1,0 +1,40 @@
+{% from '_icons.html' import icon, logo %}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="csrf" content="{{ csrf_token() }}">
+<title>{% block title %}QR TRAP{% endblock %} · QR TRAP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%238a3ffc'/%3E%3Cpath d='M7 7h7v7H7zM18 7h7v7h-7zM7 18h7v7H7z' fill='none' stroke='%23fff' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="admin">
+<nav class="topnav no-print">
+  <div class="topnav-in">
+    <a class="brand" href="{{ url_for('dashboard') }}">{{ logo() }}<span>QR<b>TRAP</b></span></a>
+    <div class="navlinks">
+      <a href="{{ url_for('dashboard') }}" class="{{ 'on' if active == 'panel' }}">{{ icon('panel') }}Panel</a>
+      <a href="{{ url_for('qr_page') }}" class="{{ 'on' if active == 'qr' }}">{{ icon('qr') }}Códigos QR</a>
+      <a href="{{ url_for('landing', slug='curiosidad', preview=1) }}" target="_blank" rel="noopener">{{ icon('external') }}Vista educativa</a>
+      <details class="dd">
+        <summary>{{ icon('download') }}Datos {{ icon('chev','sm') }}</summary>
+        <div class="dd-menu">
+          <a href="{{ url_for('export', which='eventos') }}">Eventos (CSV)</a>
+          <a href="{{ url_for('export', which='respuestas') }}">Respuestas (CSV)</a>
+        </div>
+      </details>
+    </div>
+    <div class="nav-right">
+      <span class="who">{{ icon('user') }}Equipo</span>
+      <a class="btn-out" href="{{ url_for('logout') }}" title="Cerrar sesión">{{ icon('logout') }}<span>Salir</span></a>
+    </div>
+  </div>
+</nav>
+<main class="page">
+{% block content %}{% endblock %}
+</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>
