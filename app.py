@@ -20,6 +20,7 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 from pathlib import Path
+from dotenv import load_dotenv
 
 import segno
 from flask import (Flask, Response, abort, jsonify, redirect, render_template,
@@ -32,6 +33,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from content import EVENT_TYPES, QUESTIONS, VARIANTS
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env.local")
 IS_PROD = os.environ.get("APP_ENV", "development").lower() == "production"
 HN_OFFSET = timedelta(hours=-6)  # Honduras no usa horario de verano
 
@@ -44,9 +46,17 @@ admin_password = admin_password or "qrtrap-dev"
 secret_key = secret_key or "dev-solo-para-pruebas-locales"
 
 db_url = os.environ.get("DATABASE_URL")
+
 if db_url:
     if db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+    if db_url.startswith("postgresql://"):
+        db_url = db_url.replace(
+            "postgresql://",
+            "postgresql+psycopg2://",
+            1
+        )
 else:
     data_dir = Path(os.environ.get("DATA_DIR", BASE_DIR / "data"))
     data_dir.mkdir(parents=True, exist_ok=True)
